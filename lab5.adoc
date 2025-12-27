@@ -744,7 +744,7 @@ public:
 #endif
 ----
 
-Скачать папку можно link:girlyanda[здесь].
+Скачать папку можно https://github.com/DolgihE/New2/tree/0f78a93e1dcf90bf932390115210370eea640a9b/girlyanda[здесь].
 
 == Заключение
 
