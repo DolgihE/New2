@@ -1,0 +1,102 @@
+@startuml Example
+
+interface IButton
+{
+    +{abstract} WasPressed()
+}
+
+class UserButton
+{
+    -mRegisterAddress: uint32_t
+    -mPinNum: uint32_t
+    + UserButton()
+    + WasPressed()
+}
+
+interface IController
+{
+    +{abstract} SwitchMode()
+    +{abstract} RunCurrentMode()
+}
+
+class ModeController 
+{
+    # mModes[]: IMode*
+    + ModeController()
+    +SwitchModes()
+    + RunCurrentMode()
+}
+
+interface IMode
+{
+    +{abstract} Init()
+    +{abstract} Execute()
+}
+
+class CommonMode
+{
+    # mLeds[]: ILedToggable*
+    # mLedsOnOff[]: ILedOnOff*
+    # mCurrentLedNumber: uint32_t
+    + CommonMode()
+    + Init()
+}
+
+class FadeGlowMode
+{
+    + FadeGlowMode()
+    + Execute()
+}
+
+class ChessMode
+{
+    + ChessMode()
+    + Execute()
+    + Init()
+}
+
+class RunningLightMode
+{
+    + RunningLightMode()
+    + Execute()
+}
+
+interface ILedOnOff
+{
+    +{abstract} On()
+    +{abstract} Off()
+}
+
+interface ILedToggable
+{
+    +{abstract} Toggle()
+
+}
+
+class Led
+{
+    - pinNum: uint32_t
+    - mRegisterAddress: uint32_t
+    + Led()
+    + Toggle()
+    + On()
+    + Off()
+}
+
+ILedOnOff <|-- Led
+ILedToggable <|-- Led
+ 
+IMode <|-- CommonMode
+IMode --o ModeController
+CommonMode <|-- ChessMode
+CommonMode <|-- RunningLightMode
+CommonMode <|-- FadeGlowMode
+
+IController <|-- ModeController
+
+IButton <|-- UserButton
+
+(ILedOnOff, ILedToggable) --o CommonMode
+
+
+@enduml
