@@ -1,0 +1,152 @@
+@startuml диаграмма сложная
+title Sequence Diagram - Определение положения объекта
+
+actor "Пользователь" as User
+participant "TakeMeasurementTask\n(50 ms)" as MeasTask
+participant "IADC" as ADC
+participant "DataADC" as DataADC
+participant "AngleCalculating" as Calc
+participant "CalibrationConstants" as Calib
+participant "Filter" as Filter
+participant "IDataRepository" as Repo
+participant "SendToUsartTask\n(100 ms)" as SendTask
+participant "FloatToUsart" as Converter
+participant "IUsart" as USART
+participant "Usart2Send" as UsartDriver
+participant "Bluetooth" as BT
+participant "ПК" as PC
+
+== Инициализация ==
+
+MeasTask -> ADC : Init()
+activate ADC
+ADC --> MeasTask : OK
+deactivate ADC
+
+MeasTask -> USART : Init()
+activate USART
+USART --> MeasTask : OK
+deactivate USART
+
+MeasTask -> Repo : init()
+activate Repo
+Repo --> MeasTask : OK
+deactivate Repo
+
+== Цикл измерения (каждые 50 мс) ==
+
+loop Каждые 50 мс
+    MeasTask -> ADC : StartMeasurement()
+    activate ADC
+    ADC -> ADC : Запуск АЦП\n(инжекторные каналы)
+    ADC --> MeasTask : 4 сырых значения
+    deactivate ADC
+    
+    MeasTask -> DataADC : сохранить(rawValues)
+    activate DataADC
+    DataADC --> MeasTask : OK
+    deactivate DataADC
+    
+    MeasTask -> Calc : CalculateAngle()
+    activate Calc
+    Calc -> DataADC : получить сырые данные
+    activate DataADC
+    DataADC --> Calc : rawValues
+    deactivate DataADC
+    Calc -> Calib : получить константы
+    activate Calib
+    Calib --> Calc : calibration data
+    deactivate Calib
+    Calc -> Calc : вычисление угла\n(atan2, коррекция)
+    Calc --> MeasTask : angle (float)
+    deactivate Calc
+    
+    MeasTask -> Filter : FilterAngleData(angle)
+    activate Filter
+    Filter -> Filter : применение ФНЧ\ntau = 1 - exp(-dt/RC)
+    Filter --> MeasTask : filteredAngle
+    deactivate Filter
+    
+    MeasTask -> Repo : сохранить(filteredAngle)
+    activate Repo
+    Repo -> Repo : запись в репозиторий\n(потокобезопасно)
+    Repo --> MeasTask : OK
+    deactivate Repo
+end
+
+== Цикл отправки (каждые 100 мс) ==
+
+loop Каждые 100 мс
+    SendTask -> Repo : получить отфильтрованный угол
+    activate Repo
+    Repo --> SendTask : filteredAngle
+    deactivate Repo
+    
+    SendTask -> Converter : ConvertForUsart(angle)
+    activate Converter
+    Converter -> Converter : float → массив байт\n(формат "X:0.00 Y:0.00 A:0.0\\r\\n")
+    Converter --> SendTask : uint8_t buffer[]
+    deactivate Converter
+    
+    SendTask -> USART : SendData(buffer)
+    activate USART
+    USART -> UsartDriver : передача байт
+    activate UsartDriver
+    loop для каждого байта
+        UsartDriver -> UsartDriver : ожидание TXE
+        UsartDriver -> UsartDriver : запись в USART_DR
+    end
+    UsartDriver -> BT : UART данные
+    deactivate UsartDriver
+    USART --> SendTask : OK
+    deactivate USART
+    
+    BT -> BT : преобразование UART → Bluetooth
+    BT -> PC : беспроводная передача
+    PC -> PC : отображение данных
+    PC --> User : вывод положения объекта
+end
+
+@enduml
+
+@startuml диаграмма простая 
+title Sequence Diagram (упрощённая)
+
+actor "Пользователь" as User
+participant "TakeMeasurementTask" as Meas
+participant "DataADC" as ADC
+participant "AngleCalculating" as Calc
+participant "Filter" as Filter
+participant "DataRepository" as Repo
+participant "Usart2Send" as USART
+participant "FloatToUsart" as Convert
+participant "SendToUsartTask" as Send
+
+
+== Измерение (каждые 50 мс) ==
+loop 50 ms 
+-> Meas++
+    Meas -> ADC++ : считывание АЦП\n(4 канала)
+    return
+    Meas -> Calc++ : вычисление угла
+    return rawAngle
+    Meas -> Filter++ : фильтрация
+    return filteredAngle
+    Meas -> Repo++ : сохранение
+    return
+    return
+end
+
+== Отправка (каждые 100 мс) ==
+loop 100 ms
+-> Send++
+    Send -> Repo++ : чтение угла
+    return filteredAngle
+    Send ->  Convert++ : float → массив байт
+    return
+    Send -> USART : отправка
+    USART -> User : данные на ПК
+    return
+end
+
+@enduml
