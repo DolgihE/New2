@@ -483,6 +483,10 @@ JSWSTART -> проверка JEOC = 1 -> чтение ADC_DR1-4 -> сброс JE
 .Функциональная схема
 image::block diagram.png[]
 
+== Архитектура проекта
+
+include::Architecture.adoc[]
+
 [bibliography]
 == Библиографический список
 
