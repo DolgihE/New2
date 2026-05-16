@@ -1,0 +1,175 @@
+=== Итоговый дизайн
+
+.Дизайн
+image::design_pic.png[]
+
+=== IADC и IDataADC
+
+Этот модуль имеет 2 функции:
+
+* void DoMeasurement();
+* float GetData();
+
+Первая функция не возвращает никаких данных, только производит измерение.
+
+Вторая функция считывает код АЦП и возвращает значение в формате float.
+
+.IADC.h
+[source, cpp]
+----
+include::CODE_for_kursach/ADC/Contracts/IADC.h[]
+----
+
+.IDataADC.h
+[source, cpp]
+----
+include::CODE_for_kursach/ADC/DataADC.h[]
+----
+
+.IDataADC.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/ADC/DataADC.cpp[]
+----
+
+=== ICalculate и AngleCalculating
+
+.ICalculate.h
+
+модуль имеет один метод -- расчет угла. В аргументах принимает float, возвращает тоже float.
+
+[source, cpp]
+----
+include::CODE_for_kursach/Calculate/Contracts/ICalculate.h[]
+----
+
+.AngleCalculating.h
+[source, cpp]
+----
+include::CODE_for_kursach/Calculate/AngleCalculating.h[]
+----
+
+.AngleCalculating.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Calculate/AngleCalculating.cpp[]
+----
+
+=== IFilter и Filter
+
+Имеет один метод и поле. Поле нужно для хранения последнего рассчитанного значения, которое нужно методу.
+
+.IFilter.h
+[source, cpp]
+----
+include::CODE_for_kursach/Filter/Contracts/IFilter.h[]
+----
+
+.Filter.h
+[source, cpp]
+----
+include::CODE_for_kursach/Filter/Filter.h[]
+----
+
+.Filter.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Filter/Filter.cpp[]
+----
+
+=== IConvert и FloatToUsart
+
+Имеет один метод, который принимает float и ссылку на строку. Кладет float в строку.
+
+.IConvert.h
+[source, cpp]
+----
+include::CODE_for_kursach/Converter/Contracts/IConvert.h[]
+----
+
+.FloatToUsart.h
+[source, cpp]
+----
+include::CODE_for_kursach/Converter/FloatToUsart.h[]
+----
+.FloatToUsart.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Converter/FloatToUsart.cpp[]
+----
+
+=== IUsart и Usart2Send
+
+Модуль отправки данных имеет один метод. Метод отправляет байты строки, ссылку на которую ему передали.
+
+.IUsart.h
+[source, cpp]
+----
+include::CODE_for_kursach/Usart/Contracts/IUsart.h[]
+----
+
+.Usart2Send.h
+[source, cpp]
+----
+include::CODE_for_kursach/Usart/Usart2Send.h[]
+----
+
+.Usart2Send.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Usart/Usart2Send.cpp[]
+----
+
+=== DataRepository
+
+Хранит один float. Имеет методы отправки данных в хранилище и получения данных из хранилища.
+
+.DataRepository.h
+[source, cpp]
+----
+include::CODE_for_kursach/Repository/DataRepository.h[]
+----
+
+.DataRepository.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Repository/DataRepository.cpp[]
+----
+
+=== Tasks
+
+=== TakeMeasurementTask
+
+.TakeMeasurementTask.h
+[source, cpp]
+----
+include::CODE_for_kursach/Tasks/TakeMeasurementTask.h[]
+----
+
+.TakeMeasurementTask.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Tasks/TakeMeasurementTask.cpp[]
+----
+
+=== SendToUsartTask
+
+.SendToUsartTask.h
+[source, cpp]
+----
+include::CODE_for_kursach/Tasks/TakeMeasurementTask.h[]
+----
+
+.SendToUsartTask.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/Tasks/SendToUsartTask.cpp[]
+----
+
+=== main
+
+.main.cpp
+[source, cpp]
+----
+include::CODE_for_kursach/main.cpp[]
+----
