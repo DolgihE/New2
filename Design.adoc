@@ -7,18 +7,9 @@ image::design_pic.png[]
 
 Этот модуль имеет 2 функции:
 
-<<<<<<< HEAD
 * void DoMeasurement()::не возвращает никаких данных, только производит измерение.
 * float GetData()::считывает код АЦП из регистра данных и возвращает значение в формате float.
  
-=======
-* void DoMeasurement();
-* float GetData();
-
-Первая функция не возвращает никаких данных, только производит измерение.
-
-Вторая функция считывает код АЦП и возвращает значение в формате float.
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
 
 .IADC.h
 [source, cpp]
@@ -40,17 +31,10 @@ include::CODE_for_kursach/ADC/DataADC.cpp[]
 
 === ICalculate и AngleCalculating
 
-<<<<<<< HEAD
-* float CalculateAngle(float buffer) -- метод объявляется в интерфейсе и реализуется в классе. Метод пересчитывает код АЦП и возвращает значение угла.
+* float CalculateAngle(float buffer) -- метод объявляется в интерфейсе и реализуется в классе. Метод пересчитывает код АЦП и возвращает значение угла в градусах.
 
 .ICalculate.h
 
-=======
-.ICalculate.h
-
-модуль имеет один метод -- расчет угла. В аргументах принимает float, возвращает тоже float.
-
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
 [source, cpp]
 ----
 include::CODE_for_kursach/Calculate/Contracts/ICalculate.h[]
@@ -70,13 +54,9 @@ include::CODE_for_kursach/Calculate/AngleCalculating.cpp[]
 
 === IFilter и Filter
 
-<<<<<<< HEAD
 * float FilterData(dataNotFiltered) -- метод объявляется в интерфейсе и реализуется в классе. Принимает нефильтрованное значение и возвращает отфильтрованное.
 * float mFilteredAngle -- поле, хранящее последнее отфильтрованное значение. Нужно для работы.
 * Filter() -- конструктор класса. Нужен для инициализации начального значения поля mFilteredAngle нулем.
-=======
-Имеет один метод и поле. Поле нужно для хранения последнего рассчитанного значения, которое нужно методу.
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
 
 .IFilter.h
 [source, cpp]
@@ -98,11 +78,7 @@ include::CODE_for_kursach/Filter/Filter.cpp[]
 
 === IConvert и FloatToUsart
 
-<<<<<<< HEAD
 * void ConvertForUsart(float filteredValue, char* bufferValue) -- метод объявлен в интерфейсе и реализован в классе. Принимает значение угла и конвертирует его в строку для отправки по USART.
-=======
-Имеет один метод, который принимает float и ссылку на строку. Кладет float в строку.
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
 
 .IConvert.h
 [source, cpp]
@@ -123,11 +99,7 @@ include::CODE_for_kursach/Converter/FloatToUsart.cpp[]
 
 === IUsart и Usart2Send
 
-<<<<<<< HEAD
-*  void SendData(char* buffer) const -- метод объявлен в интерфейсе и реализован в классе. Реализует полный цикл отправки строки по USART с использованием регистров буфера данных и бита статуса регистра данных.
-=======
-Модуль отправки данных имеет один метод. Метод отправляет байты строки, ссылку на которую ему передали.
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
+*  void SendData(char* buffer) const -- метод объявлен в интерфейсе и реализован в классе. Реализует полный цикл отправки строки по USART с использованием регистров буфера данных и бита статуса регистра буфера данных.
 
 .IUsart.h
 [source, cpp]
@@ -149,13 +121,9 @@ include::CODE_for_kursach/Usart/Usart2Send.cpp[]
 
 === DataRepository
 
-<<<<<<< HEAD
 float GetData() const -- метод получения данных репозитория, возвращает значение mData;
 void LoadData(float data) -- метод, записывающий в поле mData класса значение угла;
 float mData -- поле хранит данные между двумя тасками.
-=======
-Хранит один float. Имеет методы отправки данных в хранилище и получения данных из хранилища.
->>>>>>> 72c9da2da1d70c3a8001d11e9d5d8631ca51b3d9
 
 .DataRepository.h
 [source, cpp]
